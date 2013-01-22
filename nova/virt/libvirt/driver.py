@@ -186,6 +186,10 @@ libvirt_opts = [
     cfg.StrOpt('xen_hvmloader_path',
                 default='/usr/lib/xen/boot/hvmloader',
                 help='Location where the Xen hvmloader is kept'),
+    cfg.IntOpt('libvirt_nova_compute_threads_number',
+               default=20,
+               help='Number of threads that nova compute will spawn. '
+                    'Default is 20.'),
     ]
 
 CONF = cfg.CONF
@@ -279,6 +283,7 @@ class LibvirtDriver(driver.ComputeDriver):
         self._wrapped_conn = None
         self._caps = None
         self.read_only = read_only
+        tpool.set_num_threads(FLAGS.libvirt_nova_compute_threads_number)
         self.firewall_driver = firewall.load_driver(
             DEFAULT_FIREWALL_DRIVER,
             self.virtapi,
